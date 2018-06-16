@@ -5,6 +5,7 @@ from rest_framework import status
 
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from api.models import Playlist
 
 
 class UserRegistrationAPITest(TestCase):
@@ -138,12 +139,11 @@ class UserLogOutAPITest(TestCase):
         self.assertEqual(response.data['message'], self.success_msg)
 
 
-from rest_framework.test import force_authenticate
 class CommanPayloadTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create(username='testuser', 
-                email='testemail@example.com',
-                password='123456789')
+        self.user = User.objects.create(username='testuser3', 
+                email='testemail3@example.com',
+                password='1234567890')
 
         self.user.set_password(self.user.password)
 
@@ -156,17 +156,16 @@ class PlayListViewSetAPITest(CommanPayloadTest):
 
     def test_create_playlist_record(self):
 
-    
-        self.api_endpoint = '/api/v1/APXPublish/'
-        self.success_msg = 'Uid related playlist record.'
+        api_endpoint = '/api/v1/APXPublish/'
+        success_msg = 'Successfully playlist record inserted.'
 
-        self.valid_payload = {
+        valid_payload = {
             "Title": "test",
-            "Uid": "1dfba3bf-7484-4927-9652-b12154d8b724",
+            "Uid": "",
             "assests": [
                 {
                     "Title": "test1",
-                    "Uid": "0221db77-11b5-4a33-b7f7-a016860612e6",
+                    "Uid": "0221db77-11b145-4a-b7f7-a016860612e6",
                     "Uri": "http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication",
                     "Type": "TVSHOW"
                 },
@@ -179,35 +178,66 @@ class PlayListViewSetAPITest(CommanPayloadTest):
             ]
         }
 
-        self.invalid_payload = {
-            "Title": "test",
-            "Uid": "154d8b724",
-            "assests": [
-                {
-                    "Title": "test1",
-                    "Uid": "0221db77-11b5-4a33-b7f7-a016860612e6",
-                    "Uri": "http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication",
-                    "Type": "TVSHOW"
-                },
-                {
-                    "Title": "assest2",
-                    "Uid": "dd17b3eb-7c69-4ec3-9573-4d7a5127ab1b",
-                    "Uri": "http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication",
-                    "Type": "PROMO"
-                }
-            ]
-        }
+        self.client.force_authenticate(user=self.user)
         
-        self.client.login(username='testuser', password='123456789')
-        response = self.client.post(
-            self.api_endpoint,
-            data=json.dumps(self.valid_payload),
-            content_type='application/json',
-        )
-
-        import pdb
-        pdb.set_trace()
-        
+        response = self.client.post(api_endpoint, json.dumps(valid_payload), content_type='application/json')
 
         self.assertEqual(response.data['status'], status.HTTP_201_CREATED)
-        self.assertEqual(response.data['message'], self.success_msg)
+        self.assertEqual(response.data['message'], success_msg)
+
+
+class PlayListViewSetAPIRetriveTest(TestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create(username='testuser4', 
+                email='testemail4@example.com',
+                password='1234567890')
+
+        self.user.set_password(self.user.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client = APIClient()
+
+        self.playlist = Playlist.objects.create(Title='test', created_by=self.user)
+        self.api_endpoint =  '/api/v1/APXPublish/%s/' %(self.playlist.Uid)
+        self.message = "Uid related playlist record."
+
+    def test_retrive_playlist(self):
+
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get(self.api_endpoint)
+        
+        self.assertEqual(response.data['status'], status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], self.message)
+
+
+class ApplyPlaylistSchudleTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username='testuser5', 
+                email='testemail5@example.com',
+                password='1234567890')
+
+        self.user.set_password(self.user.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client = APIClient()
+
+        self.playlist = Playlist.objects.create(Title='test', created_by=self.user)
+        self.api_endpoint =  '/api/v1/APXSchedule/'
+        self.message = "Successfully playlist record inserted."
+
+        self.valid_payload = {
+                "Title": "fffffff",
+                "Uid": self.playlist.Uid,
+                "StartAt": "2018-06-10T01:01",
+                "isLoop": False
+            }
+
+    def test_apply_for_schudle(self):
+
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.post(self.api_endpoint, self.valid_payload)
+
+        self.assertEqual(response.data['status'], status.HTTP_201_CREATED)
+        self.assertEqual(response.data['message'], self.message)
