@@ -46,6 +46,8 @@ INSTALLED_APPS = [
 
     'allauth',
     'allauth.account',
+    'django_nose',
+
 
 ]
 
@@ -144,3 +146,11 @@ REST_FRAMEWORK = {
 
 
 SITE_ID = 1
+
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=api',
+]

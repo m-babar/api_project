@@ -3,3 +3,4 @@ django-allauth==0.36.0
 djangorestframework==3.8.2
 requests==2.19.1
 urllib3==1.23
+django-nose==1.4.5 
