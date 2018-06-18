@@ -43,10 +43,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
-
     'allauth',
     'allauth.account',
     'django_nose',
+
+    'rest_framework_swagger',
 
 
 ]

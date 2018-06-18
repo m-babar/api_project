@@ -16,12 +16,13 @@ Including another URLconf
 from django.conf.urls import url,include
 from django.contrib import admin
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
 
 from api import api_views
 
+schema_view = get_swagger_view(title='Django Rest framework')
+
 router = routers.DefaultRouter()
-
-
 router.register(r'register', api_views.UserRegistrationViewset,  base_name="user_registration")
 router.register(r'APXPublish', api_views.PlayListViewSet, base_name='playlist_viewset')
 router.register(r'APXSchedule', api_views.ScheduleViewSet, base_name="schedule_viewset")
@@ -34,5 +35,7 @@ urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/login$', api_views.ObtainUserAuthToken.as_view(), name='obtain_user_authtoken'),
     url(r'^api/v1/logout', api_views.UserLogout.as_view(), name='user_logout'),
+
+    url(r'^docs/$', schema_view)
 ]
 

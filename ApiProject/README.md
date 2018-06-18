@@ -120,3 +120,9 @@ Accepted Method : POST
         }
 		
 		
+
+
+## API Documentation.
+
+URL : /docs/
+
