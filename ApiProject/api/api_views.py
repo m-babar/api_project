@@ -139,7 +139,7 @@ class PlayListViewSet(viewsets.ModelViewSet):
     Playlist model view sets to manage retrive playlist records from the playlist model,
     along with perform insert record into playlist model.
     """
-    authentication_classes = (TokenAuthentication,BasicAuthentication)
+    authentication_classes = (BasicAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated,)
 
     queryset = Playlist.objects.all()
@@ -247,7 +247,7 @@ class PlayListViewSet(viewsets.ModelViewSet):
 
         
 class ScheduleViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (BasicAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated,)
     serializer_class = ScheduleSerializer
     queryset = Schedule.objects.all()

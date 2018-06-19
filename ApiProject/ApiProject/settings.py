@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'django_nose',
 
     'rest_framework_swagger',
+    'widget_tweaks',
+
 
 
 ]
@@ -67,7 +69,7 @@ ROOT_URLCONF = 'ApiProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,8 +133,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+   os.path.join(BASE_DIR, 'static'),
+)
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
+LOGIN_REDIRECT_URL = "/docs/"
+ACCOUNT_LOGOUT_ON_GET=True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -145,9 +154,7 @@ REST_FRAMEWORK = {
 
 }
 
-
 SITE_ID = 1
-
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -155,3 +162,15 @@ NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=api',
 ]
+
+
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': True,
+    'SECURITY_DEFINITIONS': {
+                'basic': {
+            'type': 'basic'
+        }
+    },
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'post'],
+}
