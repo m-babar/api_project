@@ -36,6 +36,6 @@ urlpatterns = [
     url(r'^api/v1/login$', api_views.ObtainUserAuthToken.as_view(), name='obtain_user_authtoken'),
     url(r'^api/v1/logout', api_views.UserLogout.as_view(), name='user_logout'),
 
-    url(r'^docs/$', schema_view)
+    url(r'^$', schema_view)
 ]
 
